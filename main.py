@@ -15,8 +15,9 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
-# Fuente para el puntaje
+# Fuente para el puntaje y mensajes
 font = pygame.font.Font(None, 36)
+large_font = pygame.font.Font(None, 72)
 
 # Reloj para controlar los FPS
 clock = pygame.time.Clock()
@@ -72,6 +73,7 @@ def main():
     enemies = []
     spawn_timer = 0
     score = 0
+    game_over = False
     
     while running:
         screen.fill(BLACK)  # Limpiar pantalla
@@ -79,36 +81,37 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and not game_over:
                 if event.key == pygame.K_SPACE:
                     bullets.append(Bullet(player.rect.x, player.rect.y))
         
-        keys = pygame.key.get_pressed()
-        player.move(keys)
-        
-        for bullet in bullets[:]:
-            bullet.move()
-            if bullet.rect.y < 0:
-                bullets.remove(bullet)
-        
-        if spawn_timer <= 0:
-            enemies.append(Enemy(random.randint(0, WIDTH - 50), 0))
-            spawn_timer = 60  # Genera un enemigo cada segundo
-        spawn_timer -= 1
-        
-        for enemy in enemies[:]:
-            enemy.move()
-            if enemy.rect.y > HEIGHT:
-                enemies.remove(enemy)
-        
-        # Detección de colisiones
-        for bullet in bullets[:]:
-            for enemy in enemies[:]:
-                if bullet.rect.colliderect(enemy.rect):
+        if not game_over:
+            keys = pygame.key.get_pressed()
+            player.move(keys)
+            
+            for bullet in bullets[:]:
+                bullet.move()
+                if bullet.rect.y < 0:
                     bullets.remove(bullet)
-                    enemies.remove(enemy)
-                    score += 10
-                    break
+            
+            if spawn_timer <= 0:
+                enemies.append(Enemy(random.randint(0, WIDTH - 50), 0))
+                spawn_timer = 60  # Genera un enemigo cada segundo
+            spawn_timer -= 1
+            
+            for enemy in enemies[:]:
+                enemy.move()
+                if enemy.rect.y > HEIGHT:
+                    game_over = True
+                
+            # Detección de colisiones
+            for bullet in bullets[:]:
+                for enemy in enemies[:]:
+                    if bullet.rect.colliderect(enemy.rect):
+                        bullets.remove(bullet)
+                        enemies.remove(enemy)
+                        score += 10
+                        break
         
         player.draw(screen)
         for bullet in bullets:
@@ -119,6 +122,14 @@ def main():
         # Dibujar el puntaje
         score_text = font.render(f"Score: {score}", True, WHITE)
         screen.blit(score_text, (10, 10))
+        
+        # Mostrar pantalla de Game Over
+        if game_over:
+            game_over_text = large_font.render("GAME OVER", True, RED)
+            screen.blit(game_over_text, (WIDTH // 2 - 150, HEIGHT // 2 - 50))
+            pygame.display.flip()
+            pygame.time.delay(3000)
+            running = False
         
         pygame.display.flip()  # Actualizar pantalla
         clock.tick(60)  # Limitar a 60 FPS
