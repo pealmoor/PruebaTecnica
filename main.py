@@ -65,8 +65,36 @@ class Enemy:
     def draw(self, screen):
         pygame.draw.rect(screen, GREEN, self.rect)
 
+# Función para mostrar el menú
+
+def show_menu():
+    while True:
+        screen.fill(BLACK)
+        title_text = large_font.render("Shooter 2D", True, WHITE)
+        start_text = font.render("Presiona ENTER para comenzar", True, WHITE)
+        exit_text = font.render("Presiona ESC para salir", True, WHITE)
+        
+        screen.blit(title_text, (WIDTH // 2 - 150, HEIGHT // 2 - 100))
+        screen.blit(start_text, (WIDTH // 2 - 150, HEIGHT // 2))
+        screen.blit(exit_text, (WIDTH // 2 - 150, HEIGHT // 2 + 50))
+        
+        pygame.display.flip()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return  # Iniciar el juego
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
+
 # Función principal del juego
 def main():
+    show_menu()
+    
     while True:
         running = True
         player = Player(WIDTH // 2, HEIGHT - 60)
