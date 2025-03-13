@@ -97,6 +97,14 @@ def main():
             if enemy.rect.y > HEIGHT:
                 enemies.remove(enemy)
         
+        # Detección de colisiones
+        for bullet in bullets[:]:
+            for enemy in enemies[:]:
+                if bullet.rect.colliderect(enemy.rect):
+                    bullets.remove(bullet)
+                    enemies.remove(enemy)
+                    break
+        
         player.draw(screen)
         for bullet in bullets:
             bullet.draw(screen)
