@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Inicialización de Pygame
 pygame.init()
@@ -12,6 +13,7 @@ pygame.display.set_caption("Shooter 2D")
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 # Reloj para controlar los FPS
 clock = pygame.time.Clock()
@@ -47,11 +49,25 @@ class Bullet:
     def draw(self, screen):
         pygame.draw.rect(screen, RED, self.rect)
 
+# Clase para los enemigos
+class Enemy:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 50, 50)
+        self.speed = 3
+    
+    def move(self):
+        self.rect.y += self.speed
+    
+    def draw(self, screen):
+        pygame.draw.rect(screen, GREEN, self.rect)
+
 # Bucle principal
 def main():
     running = True
     player = Player(WIDTH // 2, HEIGHT - 60)
     bullets = []
+    enemies = []
+    spawn_timer = 0
     
     while running:
         screen.fill(BLACK)  # Limpiar pantalla
@@ -71,9 +87,21 @@ def main():
             if bullet.rect.y < 0:
                 bullets.remove(bullet)
         
+        if spawn_timer <= 0:
+            enemies.append(Enemy(random.randint(0, WIDTH - 50), 0))
+            spawn_timer = 60  # Genera un enemigo cada segundo
+        spawn_timer -= 1
+        
+        for enemy in enemies[:]:
+            enemy.move()
+            if enemy.rect.y > HEIGHT:
+                enemies.remove(enemy)
+        
         player.draw(screen)
         for bullet in bullets:
             bullet.draw(screen)
+        for enemy in enemies:
+            enemy.draw(screen)
         
         pygame.display.flip()  # Actualizar pantalla
         clock.tick(60)  # Limitar a 60 FPS
