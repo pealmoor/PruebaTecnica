@@ -32,4 +32,5 @@ python main.py
 ```
 
 ## Autor
-Este juego fue desarrollado como parte de un proyecto educativo para practicar el uso de Python y PyGame.
+Este juego fue desarrollado como parte de una prueba tecnica para Kodland.
+Hecho por: Pedro Alejandro Molina Ortiz
