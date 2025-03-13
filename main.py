@@ -15,6 +15,9 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
+# Fuente para el puntaje
+font = pygame.font.Font(None, 36)
+
 # Reloj para controlar los FPS
 clock = pygame.time.Clock()
 
@@ -68,6 +71,7 @@ def main():
     bullets = []
     enemies = []
     spawn_timer = 0
+    score = 0
     
     while running:
         screen.fill(BLACK)  # Limpiar pantalla
@@ -103,6 +107,7 @@ def main():
                 if bullet.rect.colliderect(enemy.rect):
                     bullets.remove(bullet)
                     enemies.remove(enemy)
+                    score += 10
                     break
         
         player.draw(screen)
@@ -110,6 +115,10 @@ def main():
             bullet.draw(screen)
         for enemy in enemies:
             enemy.draw(screen)
+        
+        # Dibujar el puntaje
+        score_text = font.render(f"Score: {score}", True, WHITE)
+        screen.blit(score_text, (10, 10))
         
         pygame.display.flip()  # Actualizar pantalla
         clock.tick(60)  # Limitar a 60 FPS
